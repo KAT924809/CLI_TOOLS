@@ -28,8 +28,7 @@ function draw_screen() {
 
 
 function draw_screen_for_image_compressor(){
-    clear
-    tput civis 
+
     echo " █████                                                  █████████                                                                                          ";
     echo "░░███                                                  ███░░░░░███                                                                                         ";
     echo " ░███  █████████████    ██████    ███████  ██████     ███     ░░░   ██████  █████████████   ████████  ████████   ██████   █████   █████   ██████  ████████ ";

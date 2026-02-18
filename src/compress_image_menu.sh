@@ -3,7 +3,6 @@ source "$SCRIPT_DIR/screen.sh"
 function compress_image_menu() {
 
         draw_screen_for_image_compressor 
-        echo "==== Image Compression ===="
         echo ""
         echo "Step 1: Enter full path of image"
         read -r FILE

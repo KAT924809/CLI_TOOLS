@@ -5,6 +5,7 @@ VERSION="0.1"
 
 options=(
     "Compress Image"
+    "MetaData / EXIF - Removal"
     "Exit"
 )
 
@@ -12,7 +13,7 @@ selected=0
 SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[-1]}")")"
 source "$SCRIPT_DIR/compress_image_menu.sh"
 source "$SCRIPT_DIR/screen.sh"
-
+source "$SCRIPT_DIR/exif.sh"
 
 while true; do
     draw_screen
@@ -29,11 +30,15 @@ while true; do
         case $selected in
             0)
                 clear
-                
                 compress_image_menu
                 sleep 1
                 ;;
             1)
+                clear
+                exif_remove
+                exit 0
+                ;;
+            2)
                 clear
                 tput cnorm 
                 exit 0
