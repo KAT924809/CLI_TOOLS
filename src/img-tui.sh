@@ -35,7 +35,7 @@ while true; do
                 ;;
             1)
                 clear
-                exif_remove
+                exif_options
                 exit 0
                 ;;
             2)
