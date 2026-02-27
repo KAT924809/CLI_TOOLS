@@ -14,7 +14,32 @@ This Project Runs Natively on Linux.
 On WINDOWS, you must use **WSL (WINDOWS SUBSYSTEM FOR LINUX)**
 
 ###
-Step 1 — Install WSL
+STEP 1 — Install WSL
 Open PowerShell as Administrator:
 ```powershell
 wsl --install
+```
+STEP 2 - Open Ubuntu (WSL)
+```wsl
+sudo apt update && sudo apt upgrade -y
+```
+STEP 3 - Install Required Dependencies
+```wsl
+sudo apt install \
+    imagemagick \
+    ghostscript \
+    libreoffice \
+    qpdf \
+    poppler-utils -y
+``` 
+STEP 4 - Clone the Repository 
+```wsl
+git clone https://github.com/KAT924809/CLI_TOOLS.git
+cd CLI_TOOLS
+chmod +x img-tui.sh
+```
+
+STEP 5 - Run It 
+```wsl
+./img-tui.sh
+```
