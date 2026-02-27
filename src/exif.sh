@@ -53,15 +53,42 @@ function exif_remove(){
 } 
 
 function exif_options(){
-    select option in "EXIF REMOVAL FOR PNG" "EXIF REMOVAL FOR ENTIRE DIRECTORY" "EXIT"; do 
-    case "$option" in
-        "EXIF REMOVAL FOR PNG") 
-        exif_remove ;;
-        "EXIF REMOVAL FOR ENTIRE DIRECTORY") remove_metadata_entire_directory ;;
-        "EXIT") break ;;
-        *) echo "INVALID CHOICE" ;; 
-    esac 
-done 
+    local options=("EXIF REMOVAL FOR PNG" "EXIF REMOVAL FOR ENTIRE DIRECTORY" "EXIT")
+    local selected=0
+    local key
+
+    tput civis
+    while true; do
+        clear
+        echo "Select an option:"
+        echo ""
+
+        for i in "${!options[@]}"; do
+            if [ "$i" -eq "$selected" ]; then
+                echo "${REV} > ${options[$i]} ${RESET}"
+            else
+                echo "   ${options[$i]}"
+            fi
+        done
+
+        read -rsn1 key
+        case "$key" in
+            $'\x1b')
+                read -rsn2 key
+                case "$key" in
+                    '[A') ((selected > 0)) && ((selected--)) ;;
+                    '[B') ((selected < ${#options[@]} - 1)) && ((selected++)) ;;
+                esac
+                ;;
+            '')
+                case "${options[$selected]}" in
+                    "EXIF REMOVAL FOR PNG") exif_remove ;;
+                    "EXIF REMOVAL FOR ENTIRE DIRECTORY") remove_metadata_entire_directory ;;
+                    "EXIT") tput cnorm; break ;;
+                esac
+                ;;
+        esac
+    done
 }
 
     

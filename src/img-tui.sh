@@ -7,6 +7,7 @@ options=(
     "Compress Image"
     "MetaData / EXIF - Removal"
     "PDF Compressor"
+    "DOCX TO PDF"
     "Exit"
 )
 
@@ -16,6 +17,7 @@ source "$SCRIPT_DIR/compress_image_menu.sh"
 source "$SCRIPT_DIR/screen.sh"
 source "$SCRIPT_DIR/exif.sh"
 source "$SCRIPT_DIR/pdf_compressor.sh"
+source "$SCRIPT_DIR/docx_pdf.sh"
 while true; do
     draw_screen
     
@@ -45,6 +47,11 @@ while true; do
                 
                 ;;
             3)
+                clear
+                docx_options
+                
+                ;;
+            4)
                 clear
                 tput cnorm 
                 exit 0
