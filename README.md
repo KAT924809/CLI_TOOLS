@@ -6,9 +6,9 @@
 # CLI Tools
 
 **A modular Terminal UI (TUI) utility suite built entirely in Bash.**
+While each tool in this suite could be executed manually via individual CLI commands, this project consolidates them into a unified, discoverable interface. It eliminates the need to memorize flags, reduces command errors, and provides a consistent workflow for document and image operations.
 
-This project provides document, image, and file manipulation tools through a clean, arrow-key-driven terminal interface. No GUI required. No cloud APIs. Fully offline. Designed for users who prioritize privacy and prefer working in a native Linux environment.
-
+Fully offline. Fully modular. Built for terminal-first users.
 ---
 
 ## Table of Contents
