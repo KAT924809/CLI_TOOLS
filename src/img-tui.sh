@@ -6,6 +6,7 @@ VERSION="0.1"
 options=(
     "Compress Image"
     "MetaData / EXIF - Removal"
+    "PDF Compressor"
     "Exit"
 )
 
@@ -14,7 +15,7 @@ SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[-1]}")")"
 source "$SCRIPT_DIR/compress_image_menu.sh"
 source "$SCRIPT_DIR/screen.sh"
 source "$SCRIPT_DIR/exif.sh"
-
+source "$SCRIPT_DIR/pdf_compressor.sh"
 while true; do
     draw_screen
     
@@ -36,9 +37,14 @@ while true; do
             1)
                 clear
                 exif_options
-                exit 0
+                
                 ;;
             2)
+                clear
+                pdf_options
+                
+                ;;
+            3)
                 clear
                 tput cnorm 
                 exit 0
