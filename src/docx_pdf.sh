@@ -63,9 +63,136 @@ function convert_docx_folder() {
     echo "Batch conversion complete."
     tput civis
 }
+function encrypt_pdf() {
+    tput cnorm
+
+    local input="$1"
+    local password="$2"
+
+    if [ -z "$input" ] || [ -z "$password" ]; then
+        echo "Usage: encrypt_pdf <file.pdf> <password>"
+        return 1
+    fi
+
+    if [ ! -f "$input" ]; then
+        echo "File not found"
+        return 1
+    fi
+
+    local output="encrypted_$(basename "$input")"
+
+    qpdf --encrypt "$password" "$password" 256 \
+        -- "$input" "$output"
+
+    if [ -f "$output" ]; then
+        echo "Encrypted successfully → $output"
+    else
+        echo "Encryption failed"
+    fi
+
+    tput civis
+}
+
+function decrypt_pdf() {
+    tput cnorm
+
+    local input="$1"
+    local password="$2"
+
+    if [ -z "$input" ] || [ -z "$password" ]; then
+        echo "Usage: decrypt_pdf <file.pdf> <password>"
+        return 1
+    fi
+
+    if [ ! -f "$input" ]; then
+        echo "File not found"
+        return 1
+    fi
+
+    local output="decrypted_$(basename "$input")"
+
+    qpdf --password="$password" --decrypt \
+        "$input" "$output"
+
+    if [ -f "$output" ]; then
+        echo "Decrypted successfully → $output"
+    else
+        echo "Decryption failed (wrong password?)"
+    fi
+
+    tput civis
+}
+function split_pdf() {
+    tput cnorm
+
+    local input="$1"
+
+    if [ -z "$input" ]; then
+        echo "Usage: split_pdf <file.pdf>"
+        return 1
+    fi
+
+    if [ ! -f "$input" ]; then
+        echo "File not found"
+        return 1
+    fi
+
+    echo ""
+    echo "Split options:"
+    echo "1) Split all pages (one file per page)"
+    echo "2) Split by page range"
+    echo ""
+    read -p "Enter choice: " split_choice
+
+    local base="${input%.pdf}"
+
+    case $split_choice in
+        1)
+            pdfseparate "$input" "${base}_page_%d.pdf"
+            echo "PDF split complete (all pages)."
+            ;;
+        2)
+            read -p "Enter start page: " start_page
+            read -p "Enter end page: " end_page
+            pdfseparate -f "$start_page" -l "$end_page" "$input" "${base}_page_%d.pdf"
+            echo "PDF split complete (pages $start_page-$end_page)."
+            ;;
+        *)
+            echo "Invalid choice."
+            sleep 2
+            return
+            ;;
+    esac
+
+    echo ""
+    read -p "Press Enter to return to menu..."
+    tput civis
+}
+
+function merge_pdfs() {
+    tput cnorm
+
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: merge_pdfs output.pdf input1.pdf input2.pdf ..."
+        return 1
+    fi
+
+    local output="$1"
+    shift
+
+    pdfunite "$@" "$output"
+
+    if [ -f "$output" ]; then
+        echo "Merged successfully → $output"
+    else
+        echo "Merge failed"
+    fi
+
+    tput civis
+}
 
 function docx_options(){
-    local options=("DOCX to PDF" "DOCX TO PDF FULL BATCH" "EXIT")
+    local options=("DOCX to PDF" "DOCX TO PDF FULL BATCH" "ENCRYPT PDF" "DECRYPT PDF" "SPLIT PDF" "MERGE PDFs" "EXIT")
     local selected=0
     local key
 
@@ -93,8 +220,52 @@ function docx_options(){
                 ;;
             '')
                 case "${options[$selected]}" in
-                    "DOCX to PDF") convert_docx_to_pdf ;;
-                    "DOCX TO PDF FULL BATCH") convert_docx_folder ;;
+                    "DOCX to PDF") 
+                        tput cnorm
+                        echo ""
+                        read -p "Enter DOCX file path: " docx_file
+                        convert_docx_to_pdf "$docx_file"
+                        read -p "Press Enter to continue..."
+                        ;;
+                    "DOCX TO PDF FULL BATCH") 
+                        tput cnorm
+                        echo ""
+                        read -p "Enter directory path: " docx_dir
+                        convert_docx_folder "$docx_dir"
+                        read -p "Press Enter to continue..."
+                        ;;
+                    "ENCRYPT PDF")
+                        tput cnorm
+                        echo ""
+                        read -p "Enter PDF file path: " pdf_file
+                        read -sp "Enter password: " pdf_pass
+                        echo ""
+                        encrypt_pdf "$pdf_file" "$pdf_pass"
+                        read -p "Press Enter to continue..."
+                        ;;
+                    "DECRYPT PDF")
+                        tput cnorm
+                        echo ""
+                        read -p "Enter encrypted PDF file path: " enc_file
+                        read -sp "Enter password: " dec_pass
+                        echo ""
+                        decrypt_pdf "$enc_file" "$dec_pass"
+                        read -p "Press Enter to continue..."
+                        ;;
+                    "SPLIT PDF")
+                        tput cnorm
+                        echo ""
+                        read -p "Enter PDF file path: " split_file
+                        split_pdf "$split_file"
+                        ;;
+                    "MERGE PDFs")
+                        tput cnorm
+                        echo ""
+                        read -p "Enter output PDF name: " output_pdf
+                        read -p "Enter input PDFs (space-separated): " -a input_pdfs
+                        merge_pdfs "$output_pdf" "${input_pdfs[@]}"
+                        read -p "Press Enter to continue..."
+                        ;;
                     "EXIT") tput cnorm; break ;;
                 esac
                 ;;
