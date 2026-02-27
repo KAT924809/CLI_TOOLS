@@ -1,3 +1,69 @@
+function text_diff() {
+    tput cnorm
+    echo ""
+    echo "Enter first text file path:"
+    read -r file1
+
+    if [ ! -f "$file1" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+
+    echo ""
+    echo "Enter second text file path:"
+    read -r file2
+
+    if [ ! -f "$file2" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+
+    echo ""
+    echo "Comparing files..."
+    echo "Press 'q' to exit diff viewer"
+    sleep 2
+    diff --color=always -y "$file1" "$file2" | less -R
+    tput civis
+}
+
+function pdf_diff() {
+    tput cnorm
+    echo ""
+    echo "Enter first PDF file path:"
+    read -r file1
+
+    if [ ! -f "$file1" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+
+    echo ""
+    echo "Enter second PDF file path:"
+    read -r file2
+
+    if [ ! -f "$file2" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+
+    echo ""
+    echo "Converting PDFs to text..."
+    pdftotext "$file1" /tmp/file1.txt
+    pdftotext "$file2" /tmp/file2.txt
+
+    echo "Comparing files..."
+    echo "Press 'q' to exit diff viewer"
+    sleep 2
+    diff --color=always -y /tmp/file1.txt /tmp/file2.txt | less -R
+
+    rm -f /tmp/file1.txt /tmp/file2.txt
+    tput civis
+}
+
 function convert_docx_to_pdf() {
     tput cnorm
 
@@ -192,7 +258,7 @@ function merge_pdfs() {
 }
 
 function docx_options(){
-    local options=("DOCX to PDF" "DOCX TO PDF FULL BATCH" "ENCRYPT PDF" "DECRYPT PDF" "SPLIT PDF" "MERGE PDFs" "EXIT")
+    local options=("DOCX to PDF" "DOCX TO PDF FULL BATCH" "ENCRYPT PDF" "DECRYPT PDF" "SPLIT PDF" "MERGE PDFs" "TEXT DIFF" "PDF DIFF" "EXIT")
     local selected=0
     local key
 
@@ -265,6 +331,14 @@ function docx_options(){
                         read -p "Enter input PDFs (space-separated): " -a input_pdfs
                         merge_pdfs "$output_pdf" "${input_pdfs[@]}"
                         read -p "Press Enter to continue..."
+                        ;;
+                    "TEXT DIFF")
+                        clear
+                        text_diff
+                        ;;
+                    "PDF DIFF")
+                        clear
+                        pdf_diff
                         ;;
                     "EXIT") tput cnorm; break ;;
                 esac

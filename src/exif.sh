@@ -1,60 +1,149 @@
 function remove_metadata_entire_directory(){
     tput cnorm
     echo ""
-    echo "Step 1: Enter Full Path of the Directory"
+    echo "Enter full path of the directory:"
     read -r DIRe
 
     if [ ! -d "$DIRe" ]; then 
-        echo "Directory Path maybe wrong, else Directory Not found"
+        echo "Directory not found."
         sleep 2 
         return 
     fi 
-    echo  ""
+    
+    echo ""
+    echo "Processing directory..."
     BASENAME=$(basename "$DIRe")
     OUT="exif-metadata-null_${BASENAME}" 
 
     exiftool -recurse -all= "$DIRe" -o "$OUT"
     echo ""
-    echo "DONE"
-    echo "Directory Saved as $OUT"
+    echo "Done."
+    echo "Directory saved as: $OUT"
     echo ""
     read -p "Press Enter to return to menu..."
-    tput civis 
-
-    
+    tput civis
 }
 
 function exif_remove(){
-    #to-do add loading screen 
     tput cnorm
     echo ""
-    echo "Step 1: Enter Full Path of The Image"
+    echo "Enter full path of the image:"
     read -r FILE
 
     if [ ! -f "$FILE" ]; then
-
-        echo "File Path maybe wrong, else File not found"
+        echo "File not found."
         sleep 2 
         return 
     fi 
     
-    echo " "
-
+    echo ""
+    echo "Removing metadata..."
     BASENAME=$(basename "$FILE")
     OUT="exif-metadata-null_${BASENAME}"
 
-    exiftool -all="$FILE" -o "$OUT"
+    exiftool -all= "$FILE" -o "$OUT"
     echo ""
-    echo "DONE"
+    echo "Done."
     echo "Saved as: $OUT"
-
+    echo ""
+    read -p "Press Enter to return to menu..."
     tput civis
-
-
 } 
 
+function view_pdf_metadata(){
+    tput cnorm
+    echo ""
+    echo "Enter full path of the PDF:"
+    read -r file
+
+    if [ ! -f "$file" ]; then
+        echo "File not found."
+        sleep 2
+        return 1 
+    fi
+    
+    echo ""
+    exiftool "$file"
+    echo ""
+    read -p "Press Enter to return to menu..."
+    tput civis
+}
+function edit_pdf_metadata() {
+    tput cnorm
+    echo ""
+    echo "Enter full path of the PDF:"
+    read -r file
+
+    if [ ! -f "$file" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+
+    echo ""
+    read -p "New Author: " author
+    read -p "New Title: " title
+    read -p "New Subject: " subject
+    read -p "New Keywords: " keywords
+
+    echo ""
+    echo "Updating metadata..."
+    exiftool -Author="$author" \
+             -Title="$title" \
+             -Subject="$subject" \
+             -Keywords="$keywords" \
+             -overwrite_original "$file"
+
+    echo ""
+    echo "Done."
+    echo "Metadata updated."
+    echo ""
+    read -p "Press Enter to return to menu..."
+    tput civis
+}
+function view_image_exif(){
+    tput cnorm
+    echo ""
+    echo "Enter full path of the image:"
+    read -r file
+
+    if [ ! -f "$file" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+    
+    echo ""
+    exiftool "$file"
+    echo ""
+    read -p "Press Enter to return to menu..."
+    tput civis
+}
+
+function strip_image_exif(){
+    tput cnorm
+    echo ""
+    echo "Enter full path of the image:"
+    read -r file
+
+    if [ ! -f "$file" ]; then
+        echo "File not found."
+        sleep 2
+        return 1
+    fi
+    
+    echo ""
+    echo "Stripping metadata..."
+    exiftool -all= -overwrite_original "$file"
+    echo ""
+    echo "Done."
+    echo "Metadata stripped."
+    echo ""
+    read -p "Press Enter to return to menu..."
+    tput civis
+}
 function exif_options(){
-    local options=("EXIF REMOVAL FOR PNG" "EXIF REMOVAL FOR ENTIRE DIRECTORY" "EXIT")
+    local options=("REMOVE IMAGE METADATA" "REMOVE DIRECTORY METADATA" "VIEW PDF METADATA" "EDIT PDF METADATA" "VIEW IMAGE EXIF" "STRIP IMAGE EXIF" "EXIT")
     local selected=0
     local key
 
@@ -82,8 +171,12 @@ function exif_options(){
                 ;;
             '')
                 case "${options[$selected]}" in
-                    "EXIF REMOVAL FOR PNG") exif_remove ;;
-                    "EXIF REMOVAL FOR ENTIRE DIRECTORY") remove_metadata_entire_directory ;;
+                    "REMOVE IMAGE METADATA") exif_remove ;;
+                    "REMOVE DIRECTORY METADATA") remove_metadata_entire_directory ;;
+                    "VIEW PDF METADATA") view_pdf_metadata ;;
+                    "EDIT PDF METADATA") edit_pdf_metadata ;;
+                    "VIEW IMAGE EXIF") view_image_exif ;;
+                    "STRIP IMAGE EXIF") strip_image_exif ;;
                     "EXIT") tput cnorm; break ;;
                 esac
                 ;;

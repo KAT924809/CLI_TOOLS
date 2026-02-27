@@ -8,6 +8,8 @@ options=(
     "MetaData / EXIF - Removal"
     "PDF Compressor"
     "DOCX TO PDF"
+    "Bulk Rename"
+    "Secure Shred"
     "Exit"
 )
 
@@ -18,6 +20,8 @@ source "$SCRIPT_DIR/screen.sh"
 source "$SCRIPT_DIR/exif.sh"
 source "$SCRIPT_DIR/pdf_compressor.sh"
 source "$SCRIPT_DIR/docx_pdf.sh"
+source "$SCRIPT_DIR/bulk_rename.sh"
+source "$SCRIPT_DIR/secure_shred.sh"
 while true; do
     draw_screen
     
@@ -52,6 +56,14 @@ while true; do
                 
                 ;;
             4)
+                clear
+                bulk_rename_fn
+                ;;
+            5)
+                clear
+                secure_shred
+                ;;
+            6)
                 clear
                 tput cnorm 
                 exit 0

@@ -1,12 +1,15 @@
 function compressPdfs() {
     tput cnorm
+    echo ""
+    echo "Enter directory path containing PDFs:"
+    read -r input_dir
 
-    if [ -z "$1" ]; then 
-        echo "Usage: compressPdfs <Input Directory>"
+    if [ -z "$input_dir" ] || [ ! -d "$input_dir" ]; then 
+        echo "Directory not found."
+        sleep 2
         return 1 
     fi 
     
-    local input_dir="$1"
     local output_dir="${input_dir}/compressed_pdfs"
 
     mkdir -p "$output_dir"
@@ -16,9 +19,12 @@ function compressPdfs() {
 
     if [ ${#pdf_files[@]} -eq 0 ]; then
         echo "No PDF files found in $input_dir"
+        sleep 2
         return 1
     fi
 
+    echo ""
+    echo "Compressing PDFs..."
     for input_file in "${pdf_files[@]}"; do
         local base_name
         base_name=$(basename "$input_file")
@@ -31,31 +37,43 @@ function compressPdfs() {
         || echo "Failed to process $input_file"
 
         if [ -e "$output_file" ]; then
-            echo "Compressed $base_name"
+            echo "Compressed: $base_name"
         else    
             echo "Error creating output for $base_name"
         fi 
     done 
 
-    echo "Processing completed. Check $output_dir"
+    echo ""
+    echo "Done."
+    echo "Check: $output_dir"
+    echo ""
+    read -p "Press Enter to return to menu..."
     tput civis
 }
 
 function compression_by_size() {
     tput cnorm
-    local input="$1"
-    local target_kb="$2"
+    echo ""
+    echo "Enter PDF file path:"
+    read -r input
 
     if [ ! -f "$input" ]; then
-        echo "File not found"
+        echo "File not found."
+        sleep 2
         return 1
     fi
+
+    echo ""
+    echo "Enter target size in KB:"
+    read -r target_kb
 
     local target_bytes=$((target_kb * 1024))
     local output="compressed_$(basename "$input")"
 
     presets=("/prepress" "/printer" "/ebook" "/screen")
 
+    echo ""
+    echo "Compressing to ${target_kb} KB..."
     for preset in "${presets[@]}"; do
         gs -sDEVICE=pdfwrite \
            -dCompatibilityLevel=1.4 \
@@ -67,22 +85,29 @@ function compression_by_size() {
         size=$(stat -c%s "$output")
 
         if [ "$size" -le "$target_bytes" ]; then
+            echo ""
+            echo "Done."
             echo "Compressed successfully using preset $preset"
             echo "Final size: $((size/1024)) KB"
+            echo ""
+            read -p "Press Enter to return to menu..."
+            tput civis
             return 0
         fi
     done
 
+    echo ""
     echo "Could not reach exact target size."
     echo "Final size: $((size/1024)) KB"
+    echo ""
+    read -p "Press Enter to return to menu..."
+    tput civis
     return 1
-
-    tput civis 
 }
 
 
 function pdf_options(){
-    local options=("COMBINE COMPRESS ENTIRE FOLDER" "COMPRESS TO SPECIFIC SIZE-IN KB" "EXIT")
+    local options=("COMPRESS ENTIRE FOLDER" "COMPRESS TO SPECIFIC SIZE" "EXIT")
     local selected=0
     local key
 
@@ -110,8 +135,8 @@ function pdf_options(){
                 ;;
             '')
                 case "${options[$selected]}" in
-                    "COMBINE COMPRESS ENTIRE FOLDER") compressPdfs ;;
-                    "COMPRESS TO SPECIFIC SIZE-IN KB") compression_by_size ;;
+                    "COMPRESS ENTIRE FOLDER") compressPdfs ;;
+                    "COMPRESS TO SPECIFIC SIZE") compression_by_size ;;
                     "EXIT") tput cnorm; break ;;
                 esac
                 ;;
