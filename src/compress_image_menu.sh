@@ -3,6 +3,7 @@ source "$SCRIPT_DIR/screen.sh"
 function compress_image_menu() {
 
         draw_screen_for_image_compressor 
+        tput cnorm
         echo ""
         echo "Step 1: Enter full path of image"
         read -r FILE

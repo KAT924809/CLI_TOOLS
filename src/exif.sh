@@ -2,9 +2,9 @@ function remove_metadata_entire_directory(){
     tput cnorm
     echo ""
     echo "Step 1: Enter Full Path of the Directory"
-    read -F DIRe
+    read -r DIRe
 
-    if [ ! -f "$DIRe" ]; then 
+    if [ ! -d "$DIRe" ]; then 
         echo "Directory Path maybe wrong, else Directory Not found"
         sleep 2 
         return 
@@ -13,11 +13,12 @@ function remove_metadata_entire_directory(){
     BASENAME=$(basename "$DIRe")
     OUT="exif-metadata-null_${BASENAME}" 
 
-    exiftool -recurse -all="$DIRe" -o "$OUT"
+    exiftool -recurse -all= "$DIRe" -o "$OUT"
     echo ""
     echo "DONE"
     echo "Directory Saved as $OUT"
     echo ""
+    read -p "Press Enter to return to menu..."
     tput civis 
 
     
@@ -59,8 +60,7 @@ function exif_options(){
 
     tput civis
     while true; do
-        clear
-        echo "Select an option:"
+        draw_screen_for_exif
         echo ""
 
         for i in "${!options[@]}"; do

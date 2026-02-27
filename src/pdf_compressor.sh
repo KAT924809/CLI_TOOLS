@@ -88,8 +88,7 @@ function pdf_options(){
 
     tput civis
     while true; do
-        clear
-        echo "Select an option:"
+        draw_screen_for_pdf
         echo ""
 
         for i in "${!options[@]}"; do
