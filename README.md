@@ -10,3 +10,11 @@ This project provides powerful document, image, and file manipulation tools in a
 Meant for people with high privacy focus
 
 ---
+This Project Runs Natively on Linux. 
+On WINDOWS, you must use **WSL (WINDOWS SUBSYSTEM FOR LINUX)**
+
+###
+Step 1 — Install WSL
+Open PowerShell as Administrator:
+```powershell
+wsl --install
