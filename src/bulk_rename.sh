@@ -61,9 +61,15 @@ function bulk_rename_fn() {
     read -p "Apply changes? (y/N): " confirm
 
     if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+        local total=${#rename_map[@]}
+        local count=0
+        echo ""
         for old in "${!rename_map[@]}"; do
             mv "$old" "${rename_map[$old]}"
+            ((count++))
+            progressbar "$count" "$total"
         done
+        echo ""
         echo ""
         echo "Done."
         echo "Rename complete."

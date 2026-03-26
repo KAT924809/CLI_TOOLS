@@ -128,3 +128,34 @@ function draw_screen_for_shred(){
     echo "╚═══════════════════════════════════════════════════════════════════════════════╝"
     echo "${RESET}"
 }
+
+function progressbar() {
+    local current=$1 
+    local total=$2
+
+    local width=50
+    local label="KAT92"
+
+    [[ $total -eq 0 ]] && total=1
+
+    local percent=$(( current * 100 / total ))
+    local filled=$(( percent * width / 100 ))
+
+    local bar=""
+
+
+    for ((i=0; i<filled; i++)); do
+        bar+="|"
+    done
+
+
+    for ((i=filled; i<width; i++)); do
+        bar+=" "
+    done
+    local label_len=${#label}
+    local start=$(( (width - label_len) / 2 ))
+
+    bar="${bar:0:start}${label}${bar:start+label_len}"
+
+    printf "\r[%s] %3d%% (%d/%d)" "$bar" "$percent" "$current" "$total"
+}

@@ -5,8 +5,9 @@ function secure_shred() {
     draw_screen_for_shred
     tput cnorm
     echo ""
-    echo "Enter file path to securely delete:"
+    echo "Drag and Drop or Enter file path to securely delete:"
     read -r file
+    
 
     if [ ! -f "$file" ]; then
         echo "File not found."
@@ -25,7 +26,13 @@ function secure_shred() {
     if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
         echo ""
         echo "Shredding file..."
-        shred -u -n "$passes" "$file"
+        echo ""
+        for ((i=1; i<=passes; i++)); do
+            shred -n 1 "$file"
+            progressbar "$i" "$passes"
+        done
+        rm -f "$file"
+        echo ""
         echo ""
         echo "Done."
         echo "File securely shredded."

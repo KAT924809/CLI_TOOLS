@@ -121,10 +121,15 @@ function convert_docx_folder() {
         return 1
     fi
 
+    local total=${#files[@]}
+    local count=0
+    echo ""
     for file in "${files[@]}"; do
         libreoffice --headless --convert-to pdf "$file" --outdir "$dir" >/dev/null 2>&1
-        echo "Converted: $(basename "$file")"
+        ((count++))
+        progressbar "$count" "$total"
     done
+    echo ""
 
     echo "Batch conversion complete."
     tput civis

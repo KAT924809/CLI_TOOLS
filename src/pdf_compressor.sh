@@ -25,6 +25,9 @@ function compressPdfs() {
 
     echo ""
     echo "Compressing PDFs..."
+    local total=${#pdf_files[@]}
+    local count=0
+    echo ""
     for input_file in "${pdf_files[@]}"; do
         local base_name
         base_name=$(basename "$input_file")
@@ -36,12 +39,10 @@ function compressPdfs() {
           -sOutputFile="$output_file" "$input_file" \
         || echo "Failed to process $input_file"
 
-        if [ -e "$output_file" ]; then
-            echo "Compressed: $base_name"
-        else    
-            echo "Error creating output for $base_name"
-        fi 
-    done 
+        ((count++))
+        progressbar "$count" "$total"
+    done
+    echo ""
 
     echo ""
     echo "Done."
@@ -71,9 +72,12 @@ function compression_by_size() {
     local output="compressed_$(basename "$input")"
 
     presets=("/prepress" "/printer" "/ebook" "/screen")
+    local total_presets=${#presets[@]}
+    local preset_count=0
 
     echo ""
     echo "Compressing to ${target_kb} KB..."
+    echo ""
     for preset in "${presets[@]}"; do
         gs -sDEVICE=pdfwrite \
            -dCompatibilityLevel=1.4 \
@@ -82,9 +86,13 @@ function compression_by_size() {
            -sOutputFile="$output" \
            "$input"
 
+        ((preset_count++))
+        progressbar "$preset_count" "$total_presets"
+
         size=$(stat -c%s "$output")
 
         if [ "$size" -le "$target_bytes" ]; then
+            echo ""
             echo ""
             echo "Done."
             echo "Compressed successfully using preset $preset"
@@ -95,6 +103,7 @@ function compression_by_size() {
             return 0
         fi
     done
+    echo ""
 
     echo ""
     echo "Could not reach exact target size."
