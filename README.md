@@ -47,6 +47,8 @@ CLI Tools is a self-contained Bash application that runs entirely in the termina
 | `libreoffice`    | Document format conversion        |
 | `qpdf`           | PDF transformation and repair     |
 | `poppler-utils`  | PDF text extraction and utilities |
+| `ffmpeg`         | Video compression and conversion  |
+| `ffprobe`        | Video metadata extraction        |
 | `bash 5+`        | Shell runtime                     |
 
 ---
@@ -57,7 +59,7 @@ CLI Tools is a self-contained Bash application that runs entirely in the termina
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install imagemagick ghostscript libreoffice qpdf poppler-utils -y
+sudo apt install imagemagick ghostscript libreoffice qpdf poppler-utils ffmpeg -y
 ```
 
 **Step 2 — Clone the repository**
@@ -99,7 +101,7 @@ sudo apt update && sudo apt upgrade -y
 **Step 3 — Install required dependencies**
 
 ```bash
-sudo apt install imagemagick ghostscript libreoffice qpdf poppler-utils -y
+sudo apt install imagemagick ghostscript libreoffice qpdf poppler-utils ffmpeg -y
 ```
 
 **Step 4 — Clone the repository**
@@ -184,7 +186,7 @@ This is expected. LibreOffice initializes a user profile on its first execution.
 Verify that all dependencies are installed:
 
 ```bash
-for cmd in convert gs libreoffice qpdf pdfinfo; do
+for cmd in convert gs libreoffice qpdf pdfinfo ffmpeg ffprobe; do
   command -v "$cmd" && echo "$cmd: OK" || echo "$cmd: NOT FOUND"
 done
 ```
