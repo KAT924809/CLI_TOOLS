@@ -10,6 +10,7 @@ options=(
     "DOCX TO PDF"
     "Bulk Rename"
     "Secure Shred"
+    "Video Tools"
     "Exit"
 )
 
@@ -22,6 +23,7 @@ source "$SCRIPT_DIR/pdf_compressor.sh"
 source "$SCRIPT_DIR/docx_pdf.sh"
 source "$SCRIPT_DIR/bulk_rename.sh"
 source "$SCRIPT_DIR/secure_shred.sh"
+source "$SCRIPT_DIR/ffmpeg_video.sh"
 while true; do
     draw_screen
     
@@ -64,6 +66,10 @@ while true; do
                 secure_shred
                 ;;
             6)
+                clear
+                video_options
+                ;;
+            7)
                 clear
                 tput cnorm 
                 exit 0
